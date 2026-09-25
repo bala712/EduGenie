@@ -8,10 +8,6 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 client = genai.Client(api_key=API_KEY)
 
-genai.configure(api_key=API_KEY)
-
-model = genai.GenerativeModel("gemini-3.6-flash")
-
 
 def summarize_text(text: str) -> str:
     try:
