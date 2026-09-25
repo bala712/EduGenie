@@ -12,7 +12,7 @@ client = genai.Client(api_key=API_KEY)
 def answer_question(question: str) -> str:
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
+            model="gemini-3.5-flash-lite",
             contents=f"""
 You are EduGenie, an educational AI assistant.
 
