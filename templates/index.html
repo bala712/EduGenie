@@ -262,25 +262,26 @@
 
 <script>
 
-
 // ==========================================
 // ASK QUESTION
 // ==========================================
 
-async function generateQuiz() {
-    const text = document.getElementById("quizText").value;
-    const result = document.getElementById("quizResult");
+async function askQuestion() {
 
-    if (!text.trim()) {
-        alert("Please enter a topic or passage.");
+    const question = document.getElementById("question").value;
+    const result = document.getElementById("answerResult");
+
+    if (!question.trim()) {
+        alert("Please enter a question.");
         return;
     }
 
-    result.innerHTML = "⏳ Generating quiz...";
+    result.innerHTML = "⏳ Getting answer...";
 
     try {
+
         const response = await fetch(
-            "/quiz?text=" + encodeURIComponent(text),
+            "/qa?question=" + encodeURIComponent(question),
             {
                 method: "POST"
             }
@@ -288,31 +289,38 @@ async function generateQuiz() {
 
         const data = await response.json();
 
-        console.log("Quiz response:", data);
+        console.log("QA response:", data);
 
-        if (data && data.quiz) {
+        if (data.answer) {
+
             result.innerHTML =
-                "<strong>Quiz:</strong><br>" +
-                data.quiz;
-        } else if (data && data.error) {
+                "<strong>Answer:</strong><br>" +
+                data.answer;
+
+        } else if (data.error) {
+
             result.innerHTML =
-                "<span class='error'>" + data.error + "</span>";
+                "<span class='error'>" +
+                data.error +
+                "</span>";
+
         } else {
+
             result.innerHTML =
-                "<span class='error'>No quiz received.</span>";
+                "<span class='error'>No answer received.</span>";
         }
 
     } catch (error) {
-        console.error("Quiz error:", error);
+
+        console.error("QA error:", error);
 
         result.innerHTML =
-            "<span class='error'>Error connecting to server: " +
+            "<span class='error'>" +
+            "Error connecting to server: " +
             error.message +
             "</span>";
     }
 }
-
-
 
 
 // ==========================================
