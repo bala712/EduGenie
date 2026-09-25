@@ -11,7 +11,9 @@ client = genai.Client(api_key=API_KEY)
 
 def summarize_text(text: str) -> str:
     try:
-        prompt = f"""
+        response = client.models.generate_content(
+            model="gemini-3.5-flash-lite",
+            contents=f"""
 You are EduGenie, an educational AI assistant.
 
 Summarize the following educational text in simple,
@@ -22,13 +24,9 @@ Keep the important points and remove unnecessary details.
 Text:
 {text}
 """
-
-        response = client.models.generate_content(
-            model="gemini-3.5-flash lite",
-            contents=prompt
         )
 
         return response.text.strip()
 
     except Exception as e:
-        return f"Error in Summary: {e}"
+        return f"Error in Summary: {str(e)}"
