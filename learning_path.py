@@ -6,7 +6,7 @@ load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-model = genai.GenerativeModel("gemini-3.6-flash")
+client = genai.Client(api_key=API_KEY)
 
 
 def get_learning_recommendations(topic: str) -> str:
@@ -20,6 +20,7 @@ Topic:
 {topic}
 
 Include:
+
 1. Beginner level
 2. Intermediate level
 3. Advanced level
@@ -30,7 +31,10 @@ Include:
 Keep the explanation clear and student-friendly.
 """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
         return response.text.strip()
 
