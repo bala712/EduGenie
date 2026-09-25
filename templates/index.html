@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EduGenie - AI Learning Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 17px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #4338ca;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #3730a3;
+        }
+
+        .result {
+            margin-top: 18px;
+            padding: 15px;
+            background: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            border-radius: 8px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .quiz-question {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 18px;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+
+        .quiz-question h3 {
+            margin-top: 0;
+        }
+
+        .option {
+            margin: 8px 0;
+            padding: 8px;
+            background: #f1f5f9;
+            border-radius: 6px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🤖 EduGenie</h1>
+    <p>AI-Powered Learning Assistant</p>
+</header>
+
+
+<div class="container">
+
+    <!-- Ask Question -->
+    <div class="card">
+
+        <h2>❓ Ask a Question</h2>
+
+        <input
+            type="text"
+            id="question"
+            placeholder="Ask your question..."
+        >
+
+        <button onclick="askQuestion()">
+            Get Answer
+        </button>
+
+        <div
+            id="answerResult"
+            class="result"
+        ></div>
+
+    </div>
+
+
+    <!-- Explain Topic -->
+    <div class="card">
+
+        <h2>💡 Explain a Topic</h2>
+
+        <input
+            type="text"
+            id="topic"
+            placeholder="Enter a topic..."
+        >
+
+        <button onclick="explainTopic()">
+            Explain
+        </button>
+
+        <div
+            id="explanationResult"
+            class="result"
+        ></div>
+
+    </div>
+
+
+    <!-- Summarize Text -->
+    <div class="card">
+
+        <h2>📄 Summarize Text</h2>
+
+        <textarea
+            id="summaryText"
+            placeholder="Paste your text here..."
+        ></textarea>
+
+        <button onclick="summarizeText()">
+            Summarize
+        </button>
+
+        <div
+            id="summaryResult"
+            class="result"
+        ></div>
+
+    </div>
+
+
+    <!-- Generate Quiz -->
+    <div class="card">
+
+        <h2>🧠 Generate Quiz</h2>
+
+        <input
+            type="text"
+            id="quizText"
+            placeholder="Enter a topic or passage..."
+        >
+
+        <button onclick="generateQuiz()">
+            Generate Quiz
+        </button>
+
+        <div
+            id="quizResult"
+            class="result"
+        ></div>
+
+    </div>
+
+
+    <!-- Learning Path -->
+    <div class="card">
+
+        <h2>🎯 Learning Path</h2>
+
+        <input
+            type="text"
+            id="learningTopic"
+            placeholder="Enter a topic..."
+        >
+
+        <button onclick="getLearningPath()">
+            Get Learning Path
+        </button>
+
+        <div
+            id="learningResult"
+            class="result"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    <p>© 2026 EduGenie - AI Learning Assistant</p>
+</footer>
+
+
+<script>
+
+
+// ==========================================
+// ASK QUESTION
+// ==========================================
+
+async function generateQuiz() {
+    const text = document.getElementById("quizText").value;
+    const result = document.getElementById("quizResult");
+
+    if (!text.trim()) {
+        alert("Please enter a topic or passage.");
+        return;
+    }
+
+    result.innerHTML = "⏳ Generating quiz...";
+
+    try {
+        const response = await fetch(
+            "/quiz?text=" + encodeURIComponent(text),
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        console.log("Quiz response:", data);
+
+        if (data && data.quiz) {
+            result.innerHTML =
+                "<strong>Quiz:</strong><br>" +
+                data.quiz;
+        } else if (data && data.error) {
+            result.innerHTML =
+                "<span class='error'>" + data.error + "</span>";
+        } else {
+            result.innerHTML =
+                "<span class='error'>No quiz received.</span>";
+        }
+
+    } catch (error) {
+        console.error("Quiz error:", error);
+
+        result.innerHTML =
+            "<span class='error'>Error connecting to server: " +
+            error.message +
+            "</span>";
+    }
+}
+
+
+
+
+// ==========================================
+// EXPLAIN TOPIC
+// ==========================================
+
+async function explainTopic() {
+
+    const topic =
+        document.getElementById("topic").value;
+
+    const result =
+        document.getElementById("explanationResult");
+
+
+    if (!topic.trim()) {
+
+        alert("Please enter a topic.");
+
+        return;
+    }
+
+
+    result.innerHTML = "⏳ Explaining...";
+
+
+    try {
+
+        const response = await fetch(
+            "/explain?topic=" +
+            encodeURIComponent(topic),
+            {
+                method: "POST"
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (data.explanation) {
+
+            result.innerHTML =
+                "<strong>Explanation:</strong><br>" +
+                data.explanation;
+
+        } else {
+
+            result.innerHTML =
+                "<span class='error'>" +
+                (data.error || "No explanation received.") +
+                "</span>";
+        }
+
+
+    } catch (error) {
+
+        result.innerHTML =
+            "<span class='error'>" +
+            "Error: " + error +
+            "</span>";
+    }
+}
+
+
+
+// ==========================================
+// SUMMARIZE TEXT
+// ==========================================
+
+async function summarizeText() {
+    const text = document.getElementById("summaryText").value;
+    const result = document.getElementById("summaryResult");
+
+    if (!text.trim()) {
+        alert("Please enter some text.");
+        return;
+    }
+
+    result.innerHTML = "⏳ Summarizing ...";
+
+    try {
+        const response = await fetch(
+            "/summarize?text=" + encodeURIComponent(text),
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        console.log("Summary response:", data);
+
+        if (data.summary) {
+            result.innerHTML =
+                "<strong>Summary:</strong><br>" + data.summary;
+        } else if (data.error) {
+            result.innerHTML =
+                "<span class='error'>" + data.error + "</span>";
+        } else {
+            result.innerHTML =
+                "<span class='error'>No summary received.</span>";
+        }
+
+    } catch (error) {
+        console.error("Summarize error:", error);
+
+        result.innerHTML =
+            "<span class='error'>Error connecting to server: " +
+            error.message +
+            "</span>";
+    }
+}
+             
+
+
+// ==========================================
+// GENERATE QUIZ
+// ==========================================
+
+async function generateQuiz() {
+
+    const text = document.getElementById("quizText").value;
+    const result = document.getElementById("quizResult");
+
+    if (!text.trim()) {
+        alert("Please enter a topic or passage.");
+        return;
+    }
+
+    result.innerHTML = "⏳ Generating quiz...";
+
+    try {
+
+        const response = await fetch(
+            "/quiz?text=" + encodeURIComponent(text),
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        // Backend returns quiz as a direct array
+        const quiz = Array.isArray(data) ? data : data.quiz;
+
+        if (!Array.isArray(quiz)) {
+            result.innerHTML = `
+                <span class="error">
+                    Invalid quiz response.
+                </span>
+            `;
+            return;
+        }
+
+        let html = "";
+
+        quiz.forEach((item, index) => {
+
+            html += `
+                <div class="quiz-question">
+
+                    <h3>
+                        ${index + 1}. ${item.question}
+                    </h3>
+            `;
+
+            if (Array.isArray(item.options)) {
+
+                item.options.forEach((option, optionIndex) => {
+
+                    html += `
+                        <div class="option">
+                            ${String.fromCharCode(65 + optionIndex)}.
+                            ${option}
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                    <p>
+                        <strong>Answer:</strong>
+                        ${item.answer}
+                    </p>
+
+                </div>
+            `;
+        });
+
+        result.innerHTML = html;
+
+    } catch (error) {
+
+        result.innerHTML = `
+            <span class="error">
+                Error: ${error}
+            </span>
+        `;
+    }
+}
+
+
+
+
+// ==========================================
+// LEARNING PATH
+// ==========================================
+
+async function getLearningPath() {
+
+    const topic =
+        document.getElementById("learningTopic").value;
+
+    const result =
+        document.getElementById("learningResult");
+
+
+    if (!topic.trim()) {
+
+        alert("Please enter a topic.");
+
+        return;
+    }
+
+
+    result.innerHTML =
+        "⏳ Creating learning path...";
+
+
+    try {
+
+        const response = await fetch(
+            "/learn/recommendations?topic=" +
+            encodeURIComponent(topic),
+            {
+                method: "POST"
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (data.recommendations) {
+
+            result.innerHTML = `
+                <h3>📚 Recommended Learning Path</h3>
+                <p>${data.recommendations}</p>
+            `;
+
+        } else {
+
+            result.innerHTML = `
+                <p class="error">
+                    ${data.error || "No recommendations received."}
+                </p>
+            `;
+        }
+
+
+    } catch (error) {
+
+        result.innerHTML = `
+            <p class="error">
+                Error: ${error}
+            </p>
+        `;
+    }
+}
+
+
+</script>
+
+</body>
+</html>
