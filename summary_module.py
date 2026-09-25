@@ -23,7 +23,10 @@ Text:
 {text}
 """
 
-        response = model.generate_content(prompt)
+response = client.models.generate_content(
+    model="gemini-3.6-flash",
+    contents=prompt
+    )
 
         return response.text.strip()
 
